@@ -16,11 +16,12 @@ class Board
     squares.include? square
   end
 
+  # neighbors are all possible moves available from a node
   def generate_neighbor_coords(coords)
-    all_possible_moves = @@KnightMovements.each.map do |move|
+    all_possible = @@KnightMovements.each.map do |move|
                        [coords[0] + move[0], coords[1] + move[1]]
                      end
-    in_board_moves = all_possible_moves.select do |move|
+    in_board = all_possible.select do |move|
                        @locations.include?(move)
                      end
   end
@@ -130,11 +131,11 @@ class KnightsGraph
       args[:path] << current_node.value if args[:path]
       return current_node if current_node.value == args[:target_coords]
       stack.push(current_node) if !visited.include?(current_node)
+      stack.uniq!
       visited << current_node  if !visited.include?(current_node)
       current_node.neighbors.each do |n|
         current_node = n if !visited.include?(n)
       end
-      stack.uniq!
       if current_node == previous_node
         stack.pop
         break if stack.empty?
