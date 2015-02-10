@@ -67,7 +67,7 @@ class KnightsGraph
 
   # Breadth-First-Search with shortest distance checking
   # The strategy used is to pick the next neighbor 
-  # that is closes to the target node and so forth. 
+  # that is closest to the target node and so forth. 
   def bfs_shortest(args)
     queue = [args[:start_node] || @root]
     visited = []
@@ -114,7 +114,7 @@ class KnightsGraph
   end
 
   # This does not work. It results in an infinite-regression
-  # because data structure is not a tree, but a graph with no end points
+  # because the data structure is not a tree, but a graph with no end points
   # I'm leaving this here just for curiosity.
   def dfs_recursive(target_coords, start_node)
     return nil if start_node.nil? || start_node.neighbors.empty?
