@@ -8,8 +8,8 @@ class Board
 
   def initialize(size)
     @locations = size.times.map do |n|
-                 size.times.map { |m| [n,m] }
-               end.flatten(1)
+                   size.times.map { |m| [n,m] }
+                 end.flatten(1)
   end
 
   def include?(square)
@@ -66,6 +66,8 @@ class KnightsGraph
   end
 
   # Breadth-First-Search with shortest distance checking
+  # The strategy used is to pick the next neighbor 
+  # that is closes to the target node and so forth. 
   def bfs_shortest(args)
     queue = [args[:start_node] || @root]
     visited = []
@@ -113,6 +115,7 @@ class KnightsGraph
 
   # This does not work. It results in an infinite-regression
   # because data structure is not a tree, but a graph with no end points
+  # I'm leaving this here just for curiosity.
   def dfs_recursive(target_coords, start_node)
     return nil if start_node.nil? || start_node.neighbors.empty?
     return start_node if start_node.value == target_coords
