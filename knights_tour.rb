@@ -19,11 +19,11 @@ class Board
   # neighbors are all possible moves available from a node
   def generate_neighbor_coords(coords)
     all_possible = @@KnightMovements.each.map do |move|
-                       [coords[0] + move[0], coords[1] + move[1]]
-                     end
+                     [coords[0] + move[0], coords[1] + move[1]]
+                   end
     in_board = all_possible.select do |move|
-                       @locations.include?(move)
-                     end
+                 @locations.include?(move)
+               end
   end
 end
 
