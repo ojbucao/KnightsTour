@@ -38,6 +38,8 @@ class Node
 end
 
 
+require 'set'
+
 class KnightsGraph
   attr_accessor :root
 
@@ -49,142 +51,143 @@ class KnightsGraph
 
   # build graph starting from root
   def build_graph(root_node)
-    created_nodes = [root_node]
+    completed = Set.new
     queue = [root_node]
     loop do
-      current_node = queue.pop
+      current_node = queue.shift
       neighbor_coords = @board.generate_neighbor_coords(current_node.value)
       neighbor_coords.shuffle.each do |n|
-        node = bfs(target_coords: n) || node = Node.new({value: n})
+        node = find_node(n) || node = Node.new({value: n})
         current_node.neighbors << node
-        queue.unshift(node) if !created_nodes.include?(node.value)
-        queue.uniq!
+        queue.push(node) if !queue.include?(node) && !completed.include?(node.value)
       end
-      created_nodes << current_node.value
+      completed << current_node.value
       break if queue.empty?
     end
   end
 
-  # Breadth-First-Search with shortest distance checking
-  # The strategy used is to pick the next neighbor 
-<<<<<<< HEAD
-  # that is closes to the target node and so forth. 
-=======
-  # that is closest to the target node and so forth. 
->>>>>>> 3eb5ed03e33eb10d7846a378a8ddbd4a359378c8
-  def bfs_shortest(args)
-    queue = [args[:start_node] || @root]
-    visited = []
-    loop do
-      visited << current_node = queue.pop
-      args[:path] << current_node.value if args[:path]
-      return current_node if current_node.value == args[:target_coords]
-      node_distances_hash = Hash.new
+  def bfs(origin=@root, &block)
+    queue = [origin]
+    visited = Set.new
+    until queue.empty? do
+      current_node = queue.shift
+      visited << current_node
+      block.call(current_node) if block_given?
       current_node.neighbors.each do |n|
-        distance = calculate_distance(args[:target_coords],n.value)
-        node_distances_hash[distance] = n
+        queue.push(n) if !visited.include?(n)
       end
-      node_distances_hash.sort.each do |d,n|
+    end
+    return nil
+  end
+
+  def find_node(coords)
+    bfs { |vertex| return vertex if vertex.value == coords }
+  end
+
+  # Dijkstra's Algorithm
+  def find_distances(origin, target=nil)
+    distances = {}
+    bfs(origin) do |vertex|
+      # we set all nodes that we haven't calculated yet
+      # this value, which is an arbitrary high number
+      infinity = 999999999
+      distances[vertex] = 0 if distances.empty?
+      vertex.neighbors.each do |neighbor|
+        vertex_dist = distances[vertex] || infinity
+        neighbor_dist = distances[neighbor] || infinity
+        # pick the minimum value
+        distances[neighbor] = [neighbor_dist, vertex_dist + 1].min
+        if target
+          # terminate once we reach the target node
+          # calculating the rest of the nodes is not necessary
+          return distances if vertex == target
+        end
+      end
+    end
+    return distances
+  end
+
+  def find_shortest_path(origin, target)
+    distances = find_distances(origin, target)
+    current_node = target
+    visited = Set.new
+    # we start at target and backtrack to origin
+    path = [target.value]
+    until current_node == origin
+      visited << current_node
+      neighbors_sorted = distances.select do |k,v|
+                           current_node.neighbors.include?(k)
+                         end.sort_by { |n,d| d }
+      neighbors_sorted.each do |n,d|
         next if visited.include?(n)
-        queue.unshift(n)
+        current_node = n
         break
       end
-      break if calculate_distance(args[:target_coords],current_node.value) == 0
+      path.unshift(current_node.value)
     end
-    return nil
-  end
-
-  def calculate_distance(target_coords, start_coords)
-    # Use Pythagorean Theorem for calculating the distance between 2 points
-    x = target_coords[0] - start_coords[0]
-    y = target_coords[1] - start_coords[1]
-    Math.sqrt((x ** 2) + (y ** 2))
-  end
-
-  # Breadth-First-Search regular
-  def bfs(args)
-    queue = [args[:start_node] || @root]
-    visited = []
-    loop do
-      visited << current_node = queue.pop
-      args[:path] << current_node.value if args[:path]
-      return current_node if current_node.value == args[:target_coords]
-      current_node.neighbors.each do |n|
-        queue.unshift(n) if !visited.include?(n)
-      end
-      break if queue.empty?
-    end
-    return nil
-  end
-
-  # This does not work. It results in an infinite-regression
-<<<<<<< HEAD
-  # because data structure is not a tree, but a graph with no end points
-=======
-  # because the data structure is not a tree, but a graph with no end points
->>>>>>> 3eb5ed03e33eb10d7846a378a8ddbd4a359378c8
-  # I'm leaving this here just for curiosity.
-  def dfs_recursive(target_coords, start_node)
-    return nil if start_node.nil? || start_node.neighbors.empty?
-    return start_node if start_node.value == target_coords
-    start_node.neighbors.each do |n|
-      return dfs_recursive(target_coords, n)
-    end
+    return path
   end
 
   # Depth-First-Search
-  def dfs(args)
+  def dfs(origin=@root, &block)
     stack = []
-    visited = []
-    current_node = args[:start_node] || @root
-    loop do
+    visited = Set.new
+    current_node = args[:start_node] || origin
+    until stack.empty?
       previous_node = current_node
-      args[:path] << current_node.value if args[:path]
       return current_node if current_node.value == args[:target_coords]
-      stack.push(current_node) if !visited.include?(current_node)
-      stack.uniq!
+      if !stack.include?(current_node) && !visited.include?(current_node)
+        stack.push(current_node)
+      end
       visited << current_node  if !visited.include?(current_node)
       current_node.neighbors.each do |n|
         current_node = n if !visited.include?(n)
       end
       if current_node == previous_node
         stack.pop
-        break if stack.empty?
-        current_node = stack[-1]
+        current_node = stack.last
       end
     end
     return nil
+  end
+
+  def dfs_recursive(origin, visited)
+    return nil if start_node.nil? || start_node.neighbors.empty?
+    return nil if visited.include?(origin)
+    return start_node if start_node.value == target_coords
+    start_node.neighbors.each do |n|
+      return dfs_recursive(target_visited)
+    end
   end
 end
 
 
 def knight_moves(start_coords, target_coords)
   board = Board.new(8)
-  paths = []
+  graph = KnightsGraph.new([0,0], board)
 
-  # Run 10 times and then pick the shortest path
-  10.times do
-    graph = KnightsGraph.new([0,0],board)
-    path = []
-    params = { target_coords: target_coords,
-                  start_node: graph.bfs(target_coords: start_coords),
-                        path: path }
-    graph.bfs_shortest(params)
-    paths.push(path)
-  end
+  origin_node = graph.find_node(start_coords)
+  target_node = graph.find_node(target_coords)
 
-  paths.sort_by! { |x| x.length }
-  path = paths[0]
+  path = graph.find_shortest_path(origin_node, target_node)
 
-  p "Knight moves from #{start_coords} to #{target_coords}."
-  p "You made it in #{path.size - 1} moves! Here's your path: "
-  puts path.inspect
+  puts "\nKnight moves from #{start_coords} to #{target_coords}."
+  puts "You made it in #{path.size - 1} moves!"
+  puts "Here's your path: "
+  path.each { |p| puts "#{p.inspect}" }
+  puts
 end
 
 
+knight_moves([0,0],[7,7])
 
-knight_moves([3,3],[4,4])
-
-# "Knight moves from [3, 3] to [4, 4]."
-# "You made it in 4 moves! Here's your path: "
-# [[3, 3], [4, 5], [2, 4], [3, 2], [4, 4]]
+# Knight moves from [0, 0] to [7, 7].
+# You made it in 6 moves!
+# Here's your path:
+# [0, 0]
+# [2, 1]
+# [3, 3]
+# [5, 2]
+# [6, 4]
+# [5, 6]
+# [7, 7]
