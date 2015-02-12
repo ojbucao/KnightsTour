@@ -18,7 +18,7 @@ class Board
 
   # neighbors are all possible moves available from a node
   def generate_neighbor_coords(coords)
-    all_possible = @@KnightMovements.each.map do |move|
+    all_possible = @@KnightMovements.map do |move|
                      [coords[0] + move[0], coords[1] + move[1]]
                    end
     in_board = all_possible.select do |move|
@@ -67,7 +67,11 @@ class KnightsGraph
 
   # Breadth-First-Search with shortest distance checking
   # The strategy used is to pick the next neighbor 
+<<<<<<< HEAD
   # that is closes to the target node and so forth. 
+=======
+  # that is closest to the target node and so forth. 
+>>>>>>> 3eb5ed03e33eb10d7846a378a8ddbd4a359378c8
   def bfs_shortest(args)
     queue = [args[:start_node] || @root]
     visited = []
@@ -114,7 +118,11 @@ class KnightsGraph
   end
 
   # This does not work. It results in an infinite-regression
+<<<<<<< HEAD
   # because data structure is not a tree, but a graph with no end points
+=======
+  # because the data structure is not a tree, but a graph with no end points
+>>>>>>> 3eb5ed03e33eb10d7846a378a8ddbd4a359378c8
   # I'm leaving this here just for curiosity.
   def dfs_recursive(target_coords, start_node)
     return nil if start_node.nil? || start_node.neighbors.empty?
