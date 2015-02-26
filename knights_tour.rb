@@ -59,7 +59,7 @@ class KnightsGraph
       neighbor_coords.shuffle.each do |n|
         node = find_node(n) || node = Node.new({value: n})
         current_node.neighbors << node
-        queue.push(node) if !queue.include?(node) && !completed.include?(node.value)
+        queue.push(node) unless queue.include?(node) && !completed.include?(node.value)
       end
       completed << current_node.value
       break if queue.empty?
@@ -74,7 +74,7 @@ class KnightsGraph
       visited << current_node
       block.call(current_node) if block_given?
       current_node.neighbors.each do |n|
-        queue.push(n) if !visited.include?(n)
+        queue.push(n) unless visited.include?(n)
       end
     end
     return nil
@@ -136,12 +136,12 @@ class KnightsGraph
     until stack.empty?
       previous_node = current_node
       return current_node if current_node.value == args[:target_coords]
-      if !stack.include?(current_node) && !visited.include?(current_node)
+      unless stack.include?(current_node) && !visited.include?(current_node)
         stack.push(current_node)
       end
-      visited << current_node  if !visited.include?(current_node)
+      visited << current_node  unless visited.include?(current_node)
       current_node.neighbors.each do |n|
-        current_node = n if !visited.include?(n)
+        current_node = n unless visited.include?(n)
       end
       if current_node == previous_node
         stack.pop
