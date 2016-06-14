@@ -2,20 +2,12 @@ require_relative 'node'
 require 'set'
 
 class Graph
-  @pieces = {}
-
-  def self.pieces
-    @pieces_graphed
-  end
-
-  attr_accessor :root
 
   def initialize(board:, piece:)
     @board = board
     @piece = piece
-    @root = Node.new(location: [0,0])
+    @root = Node.new(location: @piece.start_pos)
     build_graph(@root)
-    Graph.pieces[@piece.class] = self
   end
 
   # build graph starting from root
@@ -27,7 +19,7 @@ class Graph
       @piece.current_location = current_node.location
       neighbor_coords = @piece.get_possible_moves
       neighbor_coords.shuffle.each do |n|
-        node = find_node(n) || node = Node.new({location: n})
+        node = find_node(n) || Node.new({location: n})
         current_node.neighbors << node
         queue.push(node) if !queue.include?(node) && !completed.include?(node.location)
       end
@@ -36,6 +28,7 @@ class Graph
     end
   end
 
+  # Breadth-First Search
   def bfs(origin=@root, &block)
     queue = [origin]
     visited = Set.new
@@ -51,26 +44,26 @@ class Graph
   end
 
   def find_node(coords)
-    bfs { |vertex| return vertex if vertex.location == coords }
+    bfs { |node| return node if node.location == coords }
   end
 
   # Dijkstra's Algorithm
   def find_distances(origin, target=nil)
     distances = {}
-    bfs(origin) do |vertex|
+    bfs(origin) do |node|
       # we set all nodes that we haven't calculated yet
       # this location, which is an arbitrary high number
       infinity = 999999999
-      distances[vertex] = 0 if distances.empty?
-      vertex.neighbors.each do |neighbor|
-        vertex_dist = distances[vertex] || infinity
+      distances[node] = 0 if distances.empty?
+      node.neighbors.each do |neighbor|
+        node_dist = distances[node] || infinity
         neighbor_dist = distances[neighbor] || infinity
         # pick the minimum location
-        distances[neighbor] = [neighbor_dist, vertex_dist + 1].min
+        distances[neighbor] = [neighbor_dist, node_dist + 1].min
         if target
           # terminate once we reach the target node
           # calculating the rest of the nodes is not necessary
-          return distances if vertex == target
+          return distances if node == target
         end
       end
     end
@@ -85,10 +78,10 @@ class Graph
     path = [target.location]
     until current_node == origin
       visited << current_node
-      neighbors_sorted = distances.select do |k,v|
+      neighbors_sorted = distances.select do |k, v|
                            current_node.neighbors.include?(k)
-                         end.sort_by { |n,d| d }
-      neighbors_sorted.each do |n,d|
+                         end.sort_by { |n, d| d }
+      neighbors_sorted.each do |n, d|
         next if visited.include?(n)
         current_node = n
         break
@@ -98,7 +91,7 @@ class Graph
     return path
   end
 
-  # Depth-First-Search
+  # Depth-First Search
   def dfs(origin=@root, &block)
     stack = []
     visited = Set.new
@@ -121,6 +114,7 @@ class Graph
     return nil
   end
 
+  # Recursive Depth-First Search
   def dfs_recursive(origin, visited)
     return nil if start_node.nil? || start_node.neighbors.empty?
     return nil if visited.include?(origin)
