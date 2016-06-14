@@ -33,25 +33,6 @@ class Graph
     end
   end
 
-  # Breadth-First Search
-  def bfs(origin=@root, &block)
-    queue = [origin]
-    visited = Set.new
-
-    until queue.empty? do
-      current_node = queue.shift
-      visited << current_node
-
-      block.call(current_node) if block_given?
-
-      current_node.neighbors.each do |n|
-        queue.push(n) if !visited.include?(n)
-      end
-    end
-
-    return nil
-  end
-
   def find_node(coords)
     bfs { |node| return node if node.location == coords }
   end
@@ -108,6 +89,27 @@ class Graph
     return path
   end
 
+  private
+
+  # Breadth-First Search
+  def bfs(origin=@root, &block)
+    queue = [origin]
+    visited = Set.new
+
+    until queue.empty? do
+      current_node = queue.shift
+      visited << current_node
+
+      block.call(current_node) if block_given?
+
+      current_node.neighbors.each do |n|
+        queue.push(n) if !visited.include?(n)
+      end
+    end
+
+    return nil
+  end
+
   # Depth-First Search
   def dfs(origin=@root, &block)
     stack = []
@@ -143,7 +145,7 @@ class Graph
     return nil if start_node.nil? || start_node.neighbors.empty?
     return nil if visited.include?(origin)
     return start_node if start_node.location == target_coords
-    
+
     start_node.neighbors.each do |n|
       return dfs_recursive(target_visited)
     end

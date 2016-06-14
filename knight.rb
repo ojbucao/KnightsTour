@@ -22,15 +22,18 @@ class Knight
     in_board_moves(moves)
   end
 
-  def in_board_moves(moves)
-    moves.select do |move|
-      @board.locations.include?(move)
-    end
-  end
-
   def get_shortest_path_between(origin, target)
     origin_node = @graph.find_node(origin)
     target_node = @graph.find_node(target)
     @graph.find_shortest_path(origin_node, target_node)
   end
+
+  private
+
+  def in_board_moves(moves)
+    moves.select do |move|
+      @board.include?(move)
+    end
+  end
+  
 end
