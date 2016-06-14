@@ -7,7 +7,7 @@ class Knight
   attr_accessor :current_location
   attr_reader :graph, :board, :start_pos
 
-  def initialize(board:, start_pos: [0,3])
+  def initialize(board:, start_pos: [0,1])
     @board = board
     @start_pos = start_pos
     @graph = Graph.new(board: @board, piece: self)
@@ -35,5 +35,5 @@ class Knight
       @board.include?(move)
     end
   end
-  
+
 end
