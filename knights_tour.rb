@@ -1,12 +1,14 @@
 require_relative 'lib/board'
 require_relative 'lib/knight'
+require_relative 'lib/graph'
 
 board = Board.new
 knight = Knight.new(board: board)
-
+graph = Graph.new(board: board, piece: knight)
 origin = [0, 0]
 target = [1, 1]
-path = knight.get_shortest_path_between(origin, target)
+
+path = graph.find_shortest_path(origin: origin, target: target)
 
 puts "Knight can get from #{origin} to #{target} in #{path.count - 1} moves."
 path.each { |step| print "#{step} " }
