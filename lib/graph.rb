@@ -1,6 +1,7 @@
 require_relative 'node'
 require 'set'
 require_relative '../lib/unique_queue'
+require 'digest'
 
 class Graph
 
@@ -12,6 +13,41 @@ class Graph
     @root = Node.new(location: @piece.start_pos)
 
     @node_count = build_graph(@root)
+  end
+
+  def tour
+    current_node = @root
+    current_location = current_node.location
+
+    path = []
+    path << current_node.location
+
+    failed_paths = []
+
+    until path.count == @node_count
+
+      current_node_cache = current_node
+
+      current_node.neighbors.sort_by {|n| n.neighbors.count }.each do |node|
+        potential_path = path + Array[node.location]
+        potential_path_hashed = Digest::MD5.hexdigest(potential_path.to_s)
+        if !failed_paths.include?(potential_path_hashed) && !path.include?(node.location)
+          current_node = node
+          break
+        end
+        next
+      end
+      
+      if current_node_cache == current_node
+        failed_paths << Digest::MD5.hexdigest(path.to_s)
+        path.pop
+        current_node = find_node(path.last)
+      else
+        path << current_node.location
+      end
+    end
+
+    return path
   end
 
   def find_node(coords)

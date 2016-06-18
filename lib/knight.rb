@@ -6,7 +6,7 @@ class Knight
   attr_accessor :current_location
   attr_reader :graph, :board, :start_pos
 
-  def initialize(board:, start_pos: [0,1])
+  def initialize(board:, start_pos: [0,0])
     @board = board
     @start_pos = start_pos
     @current_location = start_pos
