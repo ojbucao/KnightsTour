@@ -29,9 +29,10 @@ class Graph
 
       current_node_cache = current_node
 
-      # Prioitize the neighbor node that has the least amount of its own neighbors
-      # this makes the algorithm a lot faster
-      sorted_neighbors = current_node.neighbors.sort_by {|n| n.neighbors.count }
+      # Remove visited neighbors then rioitize the neighbor node that has 
+      # the least amount of its own neighbors. This makes the algorithm a lot faster
+      trimmed_neighbors = current_node.neighbors.reject { |n| path.include? n.location }
+      sorted_neighbors = trimmed_neighbors.sort_by {|n| n.neighbors.count }
 
       sorted_neighbors.each do |node|
         potential_path = path + Array[node.location]

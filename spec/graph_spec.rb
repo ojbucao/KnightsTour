@@ -29,7 +29,7 @@ describe 'Graph' do
         g = Graph.new(board: b, piece: p)
         path = g.tour
 
-        expect(path.count).to eq(25)
+        expect(path.uniq.count).to eq(g.node_count)
       end
     end
 
