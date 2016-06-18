@@ -1,7 +1,8 @@
+require_relative 'unique_queue'
+require_relative 'unique_stack'
 require_relative 'node'
-require 'set'
-require_relative '../lib/unique_queue'
 require 'digest'
+require 'set'
 
 class Graph
 
@@ -28,16 +29,25 @@ class Graph
 
       current_node_cache = current_node
 
-      current_node.neighbors.sort_by {|n| n.neighbors.count }.each do |node|
+      # Prioitize the neighbor node that has the least amount of its own neighbors
+      # this makes the algorithm a lot faster
+      sorted_neighbors = current_node.neighbors.sort_by {|n| n.neighbors.count }
+
+      sorted_neighbors.each do |node|
         potential_path = path + Array[node.location]
         potential_path_hashed = Digest::MD5.hexdigest(potential_path.to_s)
+
+        # Go to this node if the potential path is not a known bad one or if the next node
+        # has not been visited yet. Otherwise, skip it
         if !failed_paths.include?(potential_path_hashed) && !path.include?(node.location)
           current_node = node
           break
         end
+
         next
       end
       
+      # There is nowhere to go from current node so we backtrack
       if current_node_cache == current_node
         failed_paths << Digest::MD5.hexdigest(path.to_s)
         path.pop
@@ -45,6 +55,8 @@ class Graph
       else
         path << current_node.location
       end
+
+      yield(path) if block_given?
     end
 
     return path

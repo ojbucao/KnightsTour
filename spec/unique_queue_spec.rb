@@ -1,6 +1,8 @@
 require 'spec_helper'
 require_relative '../lib/unique_queue'
 
+# TODO: refactor and clean this up
+
 describe 'UniqueQueue' do
 	it 'can be instantiated' do
 		queue = UniqueQueue.new

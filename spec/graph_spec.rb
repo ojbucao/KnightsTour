@@ -22,6 +22,17 @@ describe 'Graph' do
   		end
   	end
 
+  	describe '#tour' do
+  		it 'returns the tour path' do
+  			b = Board.new(size: 5)
+  			p = Knight.new(board: b)
+  			g = Graph.new(board: b, piece: p)
+  			path = g.tour
+
+  			expect(path.count).to eq(25)
+  		end
+  	end
+
 		describe '#find_node' do
 			it 'finds a node object for a given set of coordinates' do
 				location = [3,4]

@@ -1,6 +1,8 @@
 require 'spec_helper'
 require_relative '../lib/unique_stack'
 
+#TODO: refactor and clean this up
+
 describe 'UniqueStack' do
 	it 'can be instantiated' do
 		stack = UniqueStack.new
