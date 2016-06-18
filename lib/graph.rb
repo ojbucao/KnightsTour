@@ -31,6 +31,8 @@ class Graph
 
       # Remove visited neighbors then rioitize the neighbor node that has 
       # the least amount of its own neighbors. This makes the algorithm a lot faster
+      # TODO: Also prioritze nodes who has less neighbers that have already been visited.
+
       trimmed_neighbors = current_node.neighbors.reject { |n| path.include? n.location }
       sorted_neighbors = trimmed_neighbors.sort_by {|n| n.neighbors.count }
 
