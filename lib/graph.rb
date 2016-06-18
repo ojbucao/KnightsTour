@@ -31,6 +31,7 @@ class Graph
 
       # Prioitize the neighbor node that has the least amount of its own neighbors
       # this makes the algorithm a lot faster
+      # TODO: Also prioritze nodes who has less neighbers that have already been visited.
       sorted_neighbors = current_node.neighbors.sort_by {|n| n.neighbors.count }
 
       sorted_neighbors.each do |node|
