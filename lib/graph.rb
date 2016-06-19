@@ -31,17 +31,17 @@ class Graph
 
       # Remove visited neighbors then rioitize the neighbor node that has 
       # the least amount of its own neighbors. This makes the algorithm a lot faster
-      # TODO: Also prioritze nodes who has less neighbers that have already been visited.
 
       trimmed_neighbors = current_node.neighbors.reject { |n| path.include? n.location }
       sorted_neighbors = trimmed_neighbors.sort_by {|n| n.neighbors.count { |x| !path.include? x } }
 
       sorted_neighbors.each do |node|
         potential_path = path + Array[node.location]
-        potential_path_hashed = Digest::MD5.hexdigest(potential_path.to_s)
+        potential_path_hashed = get_hash(potential_path)
 
         # Go to this node if the potential path is not a known bad one or if the next node
         # has not been visited yet. Otherwise, skip it
+
         if !failed_paths.include?(potential_path_hashed) && !path.include?(node.location)
           current_node = node
           break
@@ -51,8 +51,9 @@ class Graph
       end
       
       # There is nowhere to go from current node so we backtrack
+
       if current_node_cache == current_node
-        failed_paths << Digest::MD5.hexdigest(path.to_s)
+        failed_paths << get_hash(path)
         path.pop
         current_node = find_node(path.last)
       else
@@ -60,6 +61,10 @@ class Graph
       end
 
       yield(path) if block_given?
+
+      if failed_paths.count > 1000
+        raise 'Search terminated. Taking too long to find a path.'
+      end
     end
 
     return path
@@ -99,6 +104,10 @@ class Graph
 
   private
 
+  def get_hash(path_array)
+    Digest::MD5.hexdigest(path_array.to_s)[0..6]
+  end
+
   # build graph starting from root
   def build_graph(root_node)
     completed = Set.new
@@ -131,6 +140,7 @@ class Graph
 
       # we set all nodes that we haven't calculated yet
       # this location, which is an arbitrary high number
+
       infinity = 999999999
       distances[node] = 0 if distances.empty?
 
@@ -139,11 +149,13 @@ class Graph
         neighbor_dist = distances[neighbor] || infinity
 
         # pick the minimum location
+
         distances[neighbor] = [neighbor_dist, node_dist + 1].min
 
+        # terminate once we reach the target node because
+        # calculating the rest of the nodes is not necessary
+          
         if target
-          # terminate once we reach the target node because
-          # calculating the rest of the nodes is not necessary
           return distances if node == target
         end
       end

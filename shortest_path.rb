@@ -2,7 +2,7 @@ require_relative 'lib/board'
 require_relative 'lib/knight'
 require_relative 'lib/graph'
 
-board = Board.new(size: 5)
+board = Board.new(size: 8)
 knight = Knight.new(board: board, start_pos: [0, 0])
 graph = Graph.new(board: board, piece: knight)
 origin = [0, 0]

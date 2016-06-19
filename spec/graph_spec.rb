@@ -73,6 +73,14 @@ describe 'Graph' do
   end
 
   describe 'private methods' do
+    describe '#get_hash' do
+      it 'returns a 7 character digest' do
+        array = [[0, 0], [0, 1]]
+        digest = graph.send(:get_hash, array)
+        expect(digest.length).to eq(7)
+      end
+    end
+
     describe '#find_distances' do
       context 'when given 2 nodes, origin and target' do
         it 'returns a hash of all nodes and their distances from origin' do
