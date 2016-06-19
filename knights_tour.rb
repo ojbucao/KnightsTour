@@ -10,7 +10,7 @@ graph = Graph.new(board: board, piece: knight)
 graph.tour do |path|
   system "clear"
   puts path.inspect
-  sleep 0.2
+  # sleep 0.2
   puts
 end
 
