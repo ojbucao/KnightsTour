@@ -21,8 +21,9 @@ graph = Graph.new(board: board, piece: knight)
 
 path = graph.find_shortest_path(origin: origin, target: target)
 
-path.each do |p|
-  display = Display.new(board: board, path: [p])
+(0..(path.size - 1)).each do |x|
+  p = path[0..x]
+  display = Display.new(board: board, path: p)
   display.show
   sleep 1
 end
