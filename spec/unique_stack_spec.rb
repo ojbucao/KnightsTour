@@ -1,5 +1,4 @@
-require 'spec_helper'
-require_relative '../lib/unique_stack'
+require 'unique_stack'
 
 #TODO: refactor and clean this up
 

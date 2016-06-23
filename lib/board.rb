@@ -4,9 +4,9 @@ class Board
   attr_reader :locations
 
   def initialize(size: 8)
-    @locations = size.times.map do |n|
+    @locations = size.times.flat_map do |n|
       size.times.map { |m| [n,m] }
-    end.flatten(1)
+    end
   end
 
   def include?(location)

@@ -1,7 +1,6 @@
-require 'spec_helper'
-require_relative '../lib/board'
-require_relative '../lib/graph'
-require_relative '../lib/knight'
+require 'board'
+require 'graph'
+require 'knight'
 
 describe 'Graph' do
   let!(:size) { 8 }

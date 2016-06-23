@@ -1,5 +1,4 @@
-require 'spec_helper'
-require_relative '../lib/unique_queue'
+require 'unique_queue'
 
 # TODO: refactor and clean this up
 
