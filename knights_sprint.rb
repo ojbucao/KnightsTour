@@ -4,8 +4,8 @@ require_relative 'lib/graph'
 require_relative 'lib/display'
 
 system "clear"
-puts "Welcome to Shortest Path."
-puts "This program tries to find the shortest path between 2 squares."
+puts "Welcome to Knight's Sprint."
+puts "This program finds the shortest path between 2 squares."
 print "Enter the board size > "
 size = gets.chomp.to_i
 

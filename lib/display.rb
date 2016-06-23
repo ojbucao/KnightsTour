@@ -25,7 +25,7 @@ class Display
         bg = "\e[107m" if y % 2 == 0 && x % 2 == 0
         bg = "\e[107m" if y % 2 == 1 && x % 2 == 1
         bf = "\e[30m"
-        #  if 
+
         print "#{bg}#{bf} #{cell ? cell : ' '} "
       end
       print "\e[0m"
