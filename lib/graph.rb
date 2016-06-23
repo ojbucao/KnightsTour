@@ -53,6 +53,7 @@ class Graph
       # There is nowhere to go from current node so we backtrack
 
       if current_node_cache == current_node
+        sleep 1
         failed_paths << get_hash(path)
         path.pop
         current_node = find_node(path.last)
@@ -67,7 +68,7 @@ class Graph
       end
     end
 
-    return path
+    return { path: path, failed_paths: failed_paths }
   end
 
   def find_node(coords)
