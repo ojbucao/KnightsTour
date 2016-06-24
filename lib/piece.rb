@@ -38,28 +38,4 @@ class Piece
     end
   end
 
-  # def up_diagonal_moves(range_limit)
-  #   range = (1..range_limit)
-  #   moves = range.map { |x| [-x, x] } + range.map { |x| [x, x] }
-  #   moves.sort
-  # end
-
-  # def down_diagonal_moves(range_limit)
-  #   range = (1..range_limit)
-  #   moves = range.map { |x| [-x, -x] } + range.map { |x| [x, -x] }
-  #   moves.sort
-  # end
-
-  # def horizontal_moves(range_limit)
-  #   range = (1..range_limit)
-  #   moves = range.map { |x| [-x, 0] } + range.map { |x| [x, 0] }
-  #   moves.sort
-  # end
-
-  # def vertical_moves(range_limit)
-  #   range = (1..range_limit)
-  #   moves = range.map { |x| [0, -x] } + range.map { |x| [0, x] }
-  #   moves.sort
-  # end
-
 end

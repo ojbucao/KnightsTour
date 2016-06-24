@@ -26,9 +26,9 @@ describe 'Graph' do
         b = Board.new(size: 5)
         p = Knight.new(board: b)
         g = Graph.new(board: b, piece: p)
-        path = g.tour
+        result = g.tour
 
-        expect(path.uniq.count).to eq(g.node_count)
+        expect(result[:path].uniq.count).to eq(g.node_count)
       end
     end
 
